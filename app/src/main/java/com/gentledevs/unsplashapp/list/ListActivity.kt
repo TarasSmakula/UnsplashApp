@@ -24,10 +24,8 @@ class ListActivity : AppCompatActivity() {
 
         viewModel.images.observe(this, Observer { listAdapter.submitList(it) })
 
-        searchView.setOnQueryChangeListener({ oldQuery, newQuery ->
-            if (oldQuery != newQuery) {
-                viewModel.searForPhotos(newQuery)
-            }
+        searchView.setOnQueryChangeListener({ _, newQuery ->
+            viewModel.searForPhotos(newQuery)
         })
     }
 }

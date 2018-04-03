@@ -10,5 +10,5 @@ data class ImageUrls(
         @SerializedName("full") val fullUrl: String,
         @SerializedName("regular") val regularUrl: String,
         @SerializedName("small") val smallUrl: String,
-        @SerializedName("thumbs") val thumbsUrl: String
+        @SerializedName("thumb") val thumbsUrl: String
 )

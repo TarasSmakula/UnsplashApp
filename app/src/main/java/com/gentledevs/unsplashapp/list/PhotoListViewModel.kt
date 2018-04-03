@@ -39,6 +39,7 @@ class PhotoListViewModel(private val dataSource: ImageListDataSource) : ViewMode
 
     fun searForPhotos(query: String) {
         currentPage = 1
+        queryForSearch = query
         async(UI) {
             try {
                 val photos = dataSource.searchPhotos(query, currentPage)
