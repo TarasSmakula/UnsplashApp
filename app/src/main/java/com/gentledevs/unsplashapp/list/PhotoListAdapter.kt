@@ -36,9 +36,9 @@ class PhotoListAdapter() : ListAdapter<ImageItem, PhotoViewHolder>(itemCallback(
 
     companion object {
         fun itemCallback() = object : DiffUtil.ItemCallback<ImageItem>() {
-            override fun areItemsTheSame(oldItem: ImageItem?, newItem: ImageItem?) = oldItem == newItem
+            override fun areItemsTheSame(oldItem: ImageItem, newItem: ImageItem) = oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: ImageItem?, newItem: ImageItem?) = oldItem == newItem
+            override fun areContentsTheSame(oldItem: ImageItem, newItem: ImageItem) = oldItem == newItem
         }
     }
 

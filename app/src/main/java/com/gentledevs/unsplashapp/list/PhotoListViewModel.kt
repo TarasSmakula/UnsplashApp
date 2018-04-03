@@ -8,7 +8,6 @@ import com.gentledevs.unsplashapp.datasource.ImageListDataSource
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import ru.gildor.coroutines.retrofit.Result
-import java.lang.Exception
 
 /**
  * Created by Taras Smakula on 2018-04-02.
@@ -31,8 +30,7 @@ class PhotoListViewModel(private val dataSource: ImageListDataSource) : ViewMode
         async(UI) {
             val photos = dataSource.searchPhotos(queryForSearch, currentPage)
             if (photos is Result.Ok) {
-                _images.value = photos.value
-                imagesList = photos.value.toMutableList()
+                _images.value = imagesList.apply { imagesList.addAll(photos.value) }
             }
         }
     }
@@ -41,13 +39,10 @@ class PhotoListViewModel(private val dataSource: ImageListDataSource) : ViewMode
         currentPage = 1
         queryForSearch = query
         async(UI) {
-            try {
-                val photos = dataSource.searchPhotos(query, currentPage)
-                if (photos is Result.Ok) {
-                    _images.value = imagesList.apply { imagesList.addAll(photos.value) }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            val photos = dataSource.searchPhotos(query, currentPage)
+            if (photos is Result.Ok) {
+                _images.value = photos.value
+                imagesList = photos.value.toMutableList()
             }
         }
     }
