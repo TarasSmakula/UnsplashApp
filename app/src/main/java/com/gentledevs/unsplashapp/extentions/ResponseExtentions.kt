@@ -6,4 +6,4 @@ import com.gentledevs.unsplashapp.list.ImageItem
 /**
  * Created by Taras Smakula on 2018-04-03.
  */
-fun ImageResultItem.toImageItem() = ImageItem(id, urls.thumbsUrl, urls.fullUrl)
+fun ImageResultItem.toImageItem() = ImageItem(id, width, height, urls.thumbsUrl, urls.fullUrl)

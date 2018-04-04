@@ -7,6 +7,10 @@ import com.gentledevs.unsplashapp.R
 import com.gentledevs.unsplashapp.extentions.context
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_image_in_list.view.*
+import android.opengl.ETC1.getWidth
+import android.R.attr.path
+
+
 
 /**
  * Created by Taras Smakula on 2018-04-02.
@@ -36,7 +40,7 @@ class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(imageItem: ImageItem) {
-        Picasso.with(context).load(imageItem.thumbImageUrl).fit().into(image)
+        Picasso.with(context).load(imageItem.thumbImageUrl).into(image)
     }
 
     companion object {

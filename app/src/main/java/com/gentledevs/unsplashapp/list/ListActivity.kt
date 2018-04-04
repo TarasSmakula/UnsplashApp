@@ -3,7 +3,10 @@ package com.gentledevs.unsplashapp.list
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.StaggeredGridLayoutManager
 import com.gentledevs.unsplashapp.R
+import com.gentledevs.unsplashapp.SpaceItemDecoration
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.architecture.ext.viewModel
 
@@ -20,12 +23,22 @@ class ListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        photoList.adapter = listAdapter
+
+        intList()
 
         viewModel.images.observe(this, Observer { listAdapter.submitList(it) })
 
         searchView.setOnQueryChangeListener({ _, newQuery ->
             viewModel.searForPhotos(newQuery)
         })
+    }
+
+    private fun intList(){
+        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        staggeredGridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        photoList.layoutManager = staggeredGridLayoutManager
+        val itemDecoration = SpaceItemDecoration(this, R.dimen.item_offset)
+        photoList.addItemDecoration(itemDecoration)
+        photoList.adapter = listAdapter
     }
 }
