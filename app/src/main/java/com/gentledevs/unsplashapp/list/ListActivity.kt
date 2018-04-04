@@ -1,11 +1,13 @@
 package com.gentledevs.unsplashapp.list
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import com.gentledevs.unsplashapp.R
 import com.gentledevs.unsplashapp.SpaceItemDecoration
 import com.gentledevs.unsplashapp.photo.PhotoActivity
@@ -43,6 +45,12 @@ class ListActivity : AppCompatActivity() {
         })
 
         viewModel.searForPhotos()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(searchView.windowToken, 0)
     }
 
     private fun intList() {
