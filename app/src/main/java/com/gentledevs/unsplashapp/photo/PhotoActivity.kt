@@ -12,9 +12,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_photo.*
-import android.support.v4.app.ActivityOptionsCompat
-
-
+import org.jetbrains.anko.displayMetrics
 
 
 class PhotoActivity : AppCompatActivity() {
@@ -43,17 +41,21 @@ class PhotoActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mVisible = true
-        val thumbUrl = intent.getStringExtra(IMAGE_THUMB_URL)
-        val fullUrl = intent.getStringExtra(IMAGE_FULL_URL)
+        val photo = intent.getParcelableExtra<ImageItem>(IMAGE)
 
-        loadImageWithThumbPlaceholder(thumbUrl, fullUrl)
+
+        val fullScreenWidth = this.displayMetrics.widthPixels
+        val ratio = photo.width / photo.height.toFloat()
+        val height = fullScreenWidth / ratio
+
+        loadImageWithThumbPlaceholder(photo.thumbImageUrl, photo.fullImageUrl, fullScreenWidth, height.toInt())
 
         image.setOnClickListener { toggle() }
 
     }
 
 
-    private fun loadImageWithThumbPlaceholder(thumb: String, full: String) {
+    private fun loadImageWithThumbPlaceholder(thumb: String, full: String, width: Int, height: Int) {
         Picasso.with(this)
                 .load(thumb)
                 .networkPolicy(NetworkPolicy.OFFLINE)
@@ -61,7 +63,7 @@ class PhotoActivity : AppCompatActivity() {
                     override fun onSuccess() {
                         Picasso.with(this@PhotoActivity)
                                 .load(full)
-                                .fit()
+                                .resize(width, height)
                                 .noPlaceholder()
                                 .into(image)
                     }
@@ -117,13 +119,11 @@ class PhotoActivity : AppCompatActivity() {
         private val UI_ANIMATION_DELAY = 300
 
 
-        private val IMAGE_THUMB_URL = "thumb_url"
-        private val IMAGE_FULL_URL = "full_url"
+        private val IMAGE = "image"
 
         fun newIntent(context: Context, image: ImageItem): Intent {
             val intent = Intent(context, PhotoActivity::class.java)
-            intent.putExtra(IMAGE_THUMB_URL, image.thumbImageUrl)
-            intent.putExtra(IMAGE_FULL_URL, image.fullImageUrl)
+            intent.putExtra(IMAGE, image)
             return intent
         }
     }
