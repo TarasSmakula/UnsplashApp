@@ -22,7 +22,7 @@ class ListActivity : AppCompatActivity() {
     private fun onPhotoClick(item: ImageItem, position: Int) {
         val intent = PhotoActivity.newIntent(this, item)
         val listItem = photoList.layoutManager.findViewByPosition(position)
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, listItem as View, "photo")
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, listItem as View, getString(R.string.transition_tag_photo))
         startActivity(intent, options.toBundle())
     }
 
