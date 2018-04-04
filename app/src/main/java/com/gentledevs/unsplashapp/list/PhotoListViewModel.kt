@@ -3,7 +3,6 @@ package com.gentledevs.unsplashapp.list
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import com.gentledevs.unsplashapp.datasource.ImageListDataSource
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -16,34 +15,39 @@ class PhotoListViewModel(private val dataSource: ImageListDataSource) : ViewMode
 
     private val _images = MutableLiveData<List<ImageItem>>()
     val images: LiveData<List<ImageItem>> = _images
-    private var imagesList: MutableList<ImageItem> = mutableListOf()
-    private var currentPage = 1
+    private var imagesList: List<ImageItem> = listOf()
+
+    private val _launchFullPhotoEvent = MutableLiveData<Pair<ImageItem, Int>>()
+    val launchFullPhotoEvent: LiveData<Pair<ImageItem, Int>> = _launchFullPhotoEvent
+
     private var queryForSearch = ""
 
 
     fun onImageSelected(position: Int) {
-        Log.d("mylog", "selected")
+        _launchFullPhotoEvent.value = imagesList[position] to position
+        _launchFullPhotoEvent.value = null
     }
+
 
     fun onLoadMorePhotos() {
-        currentPage++
         async(UI) {
-            val photos = dataSource.searchPhotos(queryForSearch, currentPage)
+            val photos = dataSource.loadNextPhotos(queryForSearch)
             if (photos is Result.Ok) {
-                _images.value = imagesList.apply { imagesList.addAll(photos.value) }
+                imagesList += photos.value
+                _images.value = imagesList
             }
         }
     }
 
-    fun searForPhotos(query: String) {
-        currentPage = 1
+    fun searForPhotos(query: String = "unsplash") {
         queryForSearch = query
         async(UI) {
-            val photos = dataSource.searchPhotos(query, currentPage)
+            val photos = dataSource.photosFor(query)
             if (photos is Result.Ok) {
                 _images.value = photos.value
-                imagesList = photos.value.toMutableList()
+                imagesList = photos.value
             }
         }
     }
+
 }

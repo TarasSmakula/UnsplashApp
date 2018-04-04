@@ -1,15 +1,15 @@
 package com.gentledevs.unsplashapp.list
 
 import android.support.annotation.LayoutRes
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.gentledevs.unsplashapp.R
 import com.gentledevs.unsplashapp.extentions.context
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_image_in_list.view.*
-import android.opengl.ETC1.getWidth
-import android.R.attr.path
-
+import kotlinx.android.synthetic.main.item_image.view.*
+import org.jetbrains.anko.dip
+import org.jetbrains.anko.displayMetrics
 
 
 /**
@@ -40,10 +40,16 @@ class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(imageItem: ImageItem) {
+        val photoWidth = context.displayMetrics.widthPixels / 2 - context.dip(7.5f)
+        val ratio = imageItem.width / imageItem.height.toFloat()
+        val photoHeight = photoWidth / ratio
+
+        image.layoutParams.height = photoHeight.toInt()
         Picasso.with(context).load(imageItem.thumbImageUrl).into(image)
+        ViewCompat.setTransitionName(image, "photo")
     }
 
     companion object {
-        @LayoutRes const val LAYOUT_RES = R.layout.item_image_in_list
+        @LayoutRes const val LAYOUT_RES = R.layout.item_image
     }
 }

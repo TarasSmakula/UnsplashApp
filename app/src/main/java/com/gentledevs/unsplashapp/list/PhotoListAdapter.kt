@@ -10,7 +10,7 @@ import com.gentledevs.unsplashapp.extentions.inflate
  */
 class PhotoListAdapter() : ListAdapter<ImageItem, PhotoViewHolder>(itemCallback()) {
 
-    val ITEMS_OFFSET = 4
+    val ITEMS_OFFSET = 6
 
     private var onItemClickListener: OnItemClickListener = {}
     private var onLoadMoreListener: () -> Unit = {}
@@ -20,10 +20,10 @@ class PhotoListAdapter() : ListAdapter<ImageItem, PhotoViewHolder>(itemCallback(
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
+       if(position >= itemCount - ITEMS_OFFSET){
+           onLoadMoreListener()
+       }
         holder.bind(getItem(position))
-        if (itemCount - position < 4) {
-            onLoadMoreListener()
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = requestViewHolder(parent)
