@@ -10,6 +10,9 @@ import retrofit2.http.Query
 interface ApiInterface {
 
     @GET("/search/photos")
-    fun searchPhotos(@Query("query") query: String, @Query("page") page: Int, @Query("per_page") perPage: Int = 20, @Query("orientation") orientation: String = "portrait"): Call<SearchResponse>
+    fun searchPhotos(@Query("query") query: String,
+                     @Query("page") page: Int,
+                     @Query("per_page") perPage: Int = 20,
+                     @Query("orientation") orientation: String = "portrait"): Call<SearchResponse>
 
 }
