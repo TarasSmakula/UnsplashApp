@@ -5,10 +5,11 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.gentledevs.unsplashapp.R
+import com.gentledevs.unsplashapp.extentions.calculateHeight
 import com.gentledevs.unsplashapp.extentions.context
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_image.view.*
-import org.jetbrains.anko.dip
+import org.jetbrains.anko.dimen
 import org.jetbrains.anko.displayMetrics
 
 
@@ -40,13 +41,11 @@ class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(imageItem: ImageItem) {
-        val photoWidth = context.displayMetrics.widthPixels / 2 - context.dip(7.5f)
-        val ratio = imageItem.width / imageItem.height.toFloat()
-        val photoHeight = photoWidth / ratio
+        val photoWidth = (context.displayMetrics.widthPixels / 2) - (context.dimen(R.dimen.item_offset) * 1.5).toInt()
+        val photoHeight = imageItem.calculateHeight(photoWidth)
 
-        image.layoutParams.height = photoHeight.toInt()
+        image.layoutParams.height = photoHeight
         Picasso.with(context).load(imageItem.thumbImageUrl).into(image)
-        ViewCompat.setTransitionName(image, "photo")
     }
 
     companion object {

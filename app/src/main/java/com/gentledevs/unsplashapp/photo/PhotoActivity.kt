@@ -7,6 +7,7 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.gentledevs.unsplashapp.R
+import com.gentledevs.unsplashapp.extentions.calculateHeight
 import com.gentledevs.unsplashapp.list.ImageItem
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
@@ -45,10 +46,10 @@ class PhotoActivity : AppCompatActivity() {
 
 
         val fullScreenWidth = this.displayMetrics.widthPixels
-        val ratio = photo.width / photo.height.toFloat()
-        val height = fullScreenWidth / ratio
 
-        loadImageWithThumbPlaceholder(photo.thumbImageUrl, photo.fullImageUrl, fullScreenWidth, height.toInt())
+        val height = photo.calculateHeight(fullScreenWidth)
+
+        loadImageWithThumbPlaceholder(photo.thumbImageUrl, photo.fullImageUrl, fullScreenWidth, height)
 
         image.setOnClickListener { toggle() }
 
