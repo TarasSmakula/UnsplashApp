@@ -1,12 +1,12 @@
 package com.gentledevs.unsplashapp.list
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.gentledevs.unsplashapp.datasource.ImageListDataSource
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import ru.gildor.coroutines.retrofit.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Created by Taras Smakula on 2018-04-02.
@@ -17,8 +17,8 @@ class PhotoListViewModel(private val dataSource: ImageListDataSource) : ViewMode
     val images: LiveData<List<ImageItem>> = _images
     private var imagesList: List<ImageItem> = listOf()
 
-    private val _launchFullPhotoEvent = MutableLiveData<Pair<ImageItem, Int>>()
-    val launchFullPhotoEvent: LiveData<Pair<ImageItem, Int>> = _launchFullPhotoEvent
+    private val _launchFullPhotoEvent = MutableLiveData<Pair<ImageItem, Int>?>()
+    val launchFullPhotoEvent: MutableLiveData<Pair<ImageItem, Int>?> = _launchFullPhotoEvent
 
     private var queryForSearch = ""
 
@@ -30,23 +30,27 @@ class PhotoListViewModel(private val dataSource: ImageListDataSource) : ViewMode
 
 
     fun onLoadMorePhotos() {
-        async(UI) {
-            val photos = dataSource.loadNextPhotos(queryForSearch)
-            if (photos is Result.Ok) {
-                imagesList += photos.value
-                _images.value = imagesList
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            dataSource.loadNextPhotos(queryForSearch).fold(
+                onSuccess = {
+                    imagesList = imagesList + it
+                    _images.postValue(imagesList)
+                },
+                onFailure = {}
+            )
         }
     }
 
     fun searForPhotos(query: String = "unsplash") {
         queryForSearch = query
-        async(UI) {
-            val photos = dataSource.photosFor(query)
-            if (photos is Result.Ok) {
-                _images.value = photos.value
-                imagesList = photos.value
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            dataSource.photosFor(queryForSearch).fold(
+                onSuccess = {
+                    imagesList = it
+                    _images.postValue(imagesList)
+                },
+                onFailure = {}
+            )
         }
     }
 

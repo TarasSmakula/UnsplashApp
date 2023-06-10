@@ -2,31 +2,35 @@ package com.gentledevs.unsplashapp.photo
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.gentledevs.unsplashapp.R
+import com.gentledevs.unsplashapp.databinding.ActivityPhotoBinding
 import com.gentledevs.unsplashapp.extentions.calculateHeight
 import com.gentledevs.unsplashapp.list.ImageItem
 import com.squareup.picasso.Callback
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_photo.*
-import org.jetbrains.anko.displayMetrics
 
 
-class PhotoActivity : AppCompatActivity() {
+class PhotoActivity : AppCompatActivity(R.layout.activity_photo) {
+
+    private val binding by viewBinding(ActivityPhotoBinding::bind, R.id.container)
+
     private val mHideHandler = Handler()
     private val mHidePart2Runnable = Runnable {
 
-        image.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                        View.SYSTEM_UI_FLAG_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        binding.image.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LOW_PROFILE or
+                    View.SYSTEM_UI_FLAG_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
     private val mShowPart2Runnable = Runnable {
         supportActionBar?.show()
@@ -37,42 +41,50 @@ class PhotoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_photo)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mVisible = true
-        val photo = intent.getParcelableExtra<ImageItem>(IMAGE)
+        val photo = intent.getParcelableExtra<ImageItem>(IMAGE) ?: return
 
 
-        val fullScreenWidth = this.displayMetrics.widthPixels
+        val fullScreenWidth = Resources.getSystem().displayMetrics.widthPixels
 
         val height = photo.calculateHeight(fullScreenWidth)
 
-        loadImageWithThumbPlaceholder(photo.thumbImageUrl, photo.fullImageUrl, fullScreenWidth, height)
+        loadImageWithThumbPlaceholder(
+            photo.thumbImageUrl,
+            photo.fullImageUrl,
+            fullScreenWidth,
+            height
+        )
 
-        image.setOnClickListener { toggle() }
+        binding.image.setOnClickListener { toggle() }
 
     }
 
 
-    private fun loadImageWithThumbPlaceholder(thumb: String, full: String, width: Int, height: Int) {
+    private fun loadImageWithThumbPlaceholder(
+        thumb: String,
+        full: String,
+        width: Int,
+        height: Int
+    ) {
         Picasso.with(this)
-                .load(thumb)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .into(image, object : Callback {
-                    override fun onSuccess() {
-                        Picasso.with(this@PhotoActivity)
-                                .load(full)
-                                .resize(width, height)
-                                .noPlaceholder()
-                                .into(image)
-                    }
+            .load(thumb)
+            .networkPolicy(NetworkPolicy.OFFLINE)
+            .into(binding.image, object : Callback {
+                override fun onSuccess() {
+                    Picasso.with(this@PhotoActivity)
+                        .load(full)
+                        .resize(width, height)
+                        .noPlaceholder()
+                        .into(binding.image)
+                }
 
-                    override fun onError() {
+                override fun onError() {
 
-                    }
-                })
+                }
+            })
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -99,9 +111,9 @@ class PhotoActivity : AppCompatActivity() {
 
     private fun show() {
 
-        image.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        binding.image.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         mVisible = true
 
 

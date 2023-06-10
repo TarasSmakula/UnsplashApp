@@ -1,48 +1,54 @@
 package com.gentledevs.unsplashapp.list
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.gentledevs.unsplashapp.R
 import com.gentledevs.unsplashapp.SpaceItemDecoration
+import com.gentledevs.unsplashapp.databinding.ActivityMainBinding
 import com.gentledevs.unsplashapp.photo.PhotoActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.architecture.ext.viewModel
 
 
-class ListActivity : AppCompatActivity() {
+class ListActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val viewModel by viewModel<PhotoListViewModel>()
+    private val binding by viewBinding(ActivityMainBinding::bind, R.id.container)
 
     private fun onPhotoClick(item: ImageItem, position: Int) {
         val intent = PhotoActivity.newIntent(this, item)
-        val listItem = photoList.layoutManager.findViewByPosition(position)
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, listItem as View, getString(R.string.transition_tag_photo))
+        val listItem = binding.photoList.layoutManager?.findViewByPosition(position)
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            listItem as View,
+            getString(R.string.transition_tag_photo)
+        )
         startActivity(intent, options.toBundle())
     }
 
-    private val listAdapter = PhotoListAdapter {
-        onItemClick { viewModel.onImageSelected(it) }
-        onLoadMore { viewModel.onLoadMorePhotos() }
-    }
+    private val listAdapter = PhotoListAdapter(
+        onItemClickListener = { viewModel.onImageSelected(it) },
+        onLoadMoreListener = { viewModel.onLoadMorePhotos() }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         intList()
 
-        viewModel.images.observe(this, Observer { listAdapter.submitList(it) })
-        viewModel.launchFullPhotoEvent.observe(this, Observer { it?.let { onPhotoClick(it.first, it.second) } })
+        viewModel.images.observe(this) { listAdapter.submitList(it) }
+        viewModel.launchFullPhotoEvent.observe(
+            this
+        ) { it?.let { onPhotoClick(it.first, it.second) } }
 
-        searchView.setOnQueryChangeListener({ _, newQuery ->
+        binding.searchView.setOnQueryChangeListener { _, newQuery ->
             viewModel.searForPhotos(newQuery)
-        })
+        }
 
         viewModel.searForPhotos()
     }
@@ -50,15 +56,17 @@ class ListActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(searchView.windowToken, 0)
+        imm.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
     }
 
     private fun intList() {
-        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        staggeredGridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-        photoList.layoutManager = staggeredGridLayoutManager
+        val staggeredGridLayoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        staggeredGridLayoutManager.gapStrategy =
+            StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+        binding.photoList.layoutManager = staggeredGridLayoutManager
         val itemDecoration = SpaceItemDecoration(this, R.dimen.item_offset)
-        photoList.addItemDecoration(itemDecoration)
-        photoList.adapter = listAdapter
+        binding.photoList.addItemDecoration(itemDecoration)
+        binding.photoList.adapter = listAdapter
     }
 }

@@ -1,6 +1,7 @@
 package com.gentledevs.unsplashapp.api
 
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -10,9 +11,9 @@ import retrofit2.http.Query
 interface ApiInterface {
 
     @GET("/search/photos")
-    fun searchPhotos(@Query("query") query: String,
+    suspend fun searchPhotos(@Query("query") query: String,
                      @Query("page") page: Int,
                      @Query("per_page") perPage: Int = 20,
-                     @Query("orientation") orientation: String = "portrait"): Call<SearchResponse>
+                     @Query("orientation") orientation: String = "portrait"): Response<SearchResponse>
 
 }

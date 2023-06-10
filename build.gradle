@@ -1,14 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.8.21'
 
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:8.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -34,8 +34,8 @@ ext {
     support_v7_version = support_version
     constraint_version = "1.1.0-beta3"
 
-    room_version = "1.0.0"
-    retrofit_version = "2.3.0"
+    room_version = "2.5.1"
+    retrofit_version = "2.9.0"
     picasso_version = "2.5.2"
     koin_version = '0.9.1'
     retrofit_coroutine_version = "0.8.2"

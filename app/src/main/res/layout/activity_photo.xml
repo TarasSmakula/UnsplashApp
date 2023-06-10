@@ -1,15 +1,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="@color/black"
-             tools:context="com.gentledevs.unsplashapp.photo.PhotoActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context="com.gentledevs.unsplashapp.photo.PhotoActivity">
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:transitionName="@string/transition_tag_photo"/>
+        android:transitionName="@string/transition_tag_photo" />
 
 
 </FrameLayout>
